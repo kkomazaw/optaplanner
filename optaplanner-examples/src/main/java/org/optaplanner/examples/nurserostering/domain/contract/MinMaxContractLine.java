@@ -82,4 +82,24 @@ public class MinMaxContractLine extends ContractLine {
         return minimumEnabled || maximumEnabled;
     }
 
+    @Override
+    public String toString() {
+        String str = contractLineType.toString() + "minmax";
+        switch (contractLineType) {
+        case TOTAL_ASSIGNMENTS:
+            str = "勤務シフト数の最小値は" + minimumValue + "人日、最大値は" + maximumValue +"人日とする。";
+            break;
+        case CONSECUTIVE_WORKING_DAYS:
+            str = "最小連続勤務数は" + minimumValue + "人日、最大連続勤務数は" + maximumValue +"人日とする。";
+            break;
+        case CONSECUTIVE_FREE_DAYS:
+            str = "最小の連続非勤務日数は" + minimumValue + "人日、最大の連続非勤務日数は" + maximumValue +"人日とする。";
+            break;          
+        default:
+            break;
+        }
+
+        return str;
+    }
+
 }

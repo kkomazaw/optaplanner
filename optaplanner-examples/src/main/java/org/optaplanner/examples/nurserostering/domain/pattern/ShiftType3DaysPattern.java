@@ -52,7 +52,7 @@ public class ShiftType3DaysPattern extends Pattern {
 
     @Override
     public String toString() {
-        return "Work pattern: " + dayIndex0ShiftType + ", " + dayIndex1ShiftType + ", " + dayIndex2ShiftType;
+        return "勤務パターン: " + dayIndex0ShiftType + ", " + dayIndex1ShiftType + ", " + dayIndex2ShiftType;
     }
 
 }

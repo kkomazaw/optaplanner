@@ -101,8 +101,27 @@ public class Employee extends AbstractPersistable implements Labeled {
 
     @Override
     public String getLabel() {
-        return "Employee " + name;
+
+        // Modified by yhasegaw.
+        List<Skill> skillList = new ArrayList<Skill>();
+        if (skillProficiencyList != null) {
+            for (SkillProficiency prof : skillProficiencyList) {
+                Skill skill = prof.getSkill();
+                skillList.add(skill);
+            }
+        }
+
+        String role = null;
+        if (skillList.size() == 1)
+            role = "オペレーター";
+        else if (skillList.size() == 2)
+            role = "スーパーバイザー";
+        else
+            role = "No Role ";
+
+        return role + name + "\n"; // + skillList;
     }
+
 
     @Override
     public String toString() {

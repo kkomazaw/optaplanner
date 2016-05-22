@@ -31,6 +31,16 @@ public class Contract extends AbstractPersistable {
 
     private List<ContractLine> contractLineList;
 
+    public String getContractInfo(){
+
+        StringBuilder contractLine = new StringBuilder();
+        for(ContractLine line : contractLineList){
+            contractLine.append(line + "\n");
+        }
+        return description + "\n\n契約詳細 \n" + contractLine;
+        
+    }
+
     public String getCode() {
         return code;
     }

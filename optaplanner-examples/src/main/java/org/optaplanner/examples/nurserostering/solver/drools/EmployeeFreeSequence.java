@@ -93,7 +93,7 @@ public class EmployeeFreeSequence implements Comparable<EmployeeFreeSequence>, S
 
     @Override
     public String toString() {
-        return employee + " is free between " + firstDayIndex + " - " + lastDayIndex;
+        return employee + " が次の期間非勤務です: " + firstDayIndex + " - " + lastDayIndex;
     }
 
     public int getDayLength() {

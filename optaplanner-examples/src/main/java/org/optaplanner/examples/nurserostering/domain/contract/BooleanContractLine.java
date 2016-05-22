@@ -41,4 +41,24 @@ public class BooleanContractLine extends ContractLine {
         this.weight = weight;
     }
 
+    @Override
+    public String toString() {
+        String str = contractLineType.toString();
+        switch (contractLineType) {
+        case SINGLE_ASSIGNMENT_PER_DAY:
+            str = "1日当りのシフト数は" + weight + "とする。";
+            break;
+        case COMPLETE_WEEKENDS:
+            str = "週末勤務の場合、週末の初日に勤務開始し、週末の最終日に勤務終了すること";
+            break;
+        case IDENTICAL_SHIFT_TYPES_DURING_WEEKEND:
+            str = "週末勤務の場合、同じシフトパターン勤務とすること";
+            break;          
+        default:
+            break;
+        }
+        return str;
+
+    }
+
 }

@@ -17,14 +17,25 @@
 package org.optaplanner.examples.nurserostering.domain.contract;
 
 public enum ContractLineType {
-    SINGLE_ASSIGNMENT_PER_DAY,
-    TOTAL_ASSIGNMENTS,
-    CONSECUTIVE_WORKING_DAYS,
-    CONSECUTIVE_FREE_DAYS,
-    CONSECUTIVE_WORKING_WEEKENDS,
-    TOTAL_WORKING_WEEKENDS_IN_FOUR_WEEKS,
-    COMPLETE_WEEKENDS,
-    IDENTICAL_SHIFT_TYPES_DURING_WEEKEND,
-    NO_NIGHT_SHIFT_BEFORE_FREE_WEEKEND,
-    ALTERNATIVE_SKILL_CATEGORY
+    SINGLE_ASSIGNMENT_PER_DAY("一日当りのシフト数は、"),
+    TOTAL_ASSIGNMENTS("foobar"),
+    CONSECUTIVE_WORKING_DAYS("foobar"),
+    CONSECUTIVE_FREE_DAYS("foobar"),
+    CONSECUTIVE_WORKING_WEEKENDS("foobar"),
+    TOTAL_WORKING_WEEKENDS_IN_FOUR_WEEKS("foobar"),
+    COMPLETE_WEEKENDS("foobar"),
+    IDENTICAL_SHIFT_TYPES_DURING_WEEKEND("foobar"),
+    NO_NIGHT_SHIFT_BEFORE_FREE_WEEKEND("foobar"),
+    ALTERNATIVE_SKILL_CATEGORY("foobar");
+    
+    private final String jpText;
+
+    private ContractLineType(String jpText) {
+        this.jpText = jpText;
+    }
+
+    public String getJpText() {
+        return jpText;
+    }
+
 }

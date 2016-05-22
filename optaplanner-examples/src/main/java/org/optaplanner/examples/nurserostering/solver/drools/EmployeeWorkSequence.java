@@ -93,7 +93,7 @@ public class EmployeeWorkSequence implements Comparable<EmployeeWorkSequence>, S
 
     @Override
     public String toString() {
-        return employee + " is working between " + firstDayIndex + " - " + lastDayIndex;
+        return employee + " が次の期間勤務しています: " + firstDayIndex + " - " + lastDayIndex;
     }
 
     public int getDayLength() {

@@ -42,6 +42,24 @@ public abstract class XStreamSolutionDao<Solution_> extends AbstractSolutionDao<
     public Solution_ readSolution(File inputSolutionFile) {
         Solution_ solution = xStreamSolutionFileIO.read(inputSolutionFile);
         logger.info("Opened: {}", inputSolutionFile);
+
+        // Added by yhasegaw.
+        try {
+            if (inputSolutionFile.getCanonicalPath().contains("nurserostering")){
+                NurseRoster roster = (NurseRoster) solution;
+                for (Employee employee : roster.getEmployeeList()) {
+                    for (SkillProficiency prof : roster.getSkillProficiencyList()) {
+                        if (prof.getEmployee().getId() == employee.getId()) {
+                            employee.getSkillProficiencyList().add(prof);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }       
+
         return solution;
     }
 

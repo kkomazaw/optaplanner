@@ -84,7 +84,7 @@ public class EmployeePanel extends JPanel {
     }
 
     private String getEmployeeLabel() {
-        return employee == null ? "Unassigned" : employee.getLabel();
+        return employee == null ? "未割り当て" : employee.getLabel();
     }
 
     public void setShiftDateListAndShiftList(List<ShiftDate> shiftDateList, List<Shift> shiftList) {
@@ -96,6 +96,46 @@ public class EmployeePanel extends JPanel {
     private void createUI() {
         JPanel labelAndDeletePanel = new JPanel(new BorderLayout(5, 0));
         if (employee != null) {
+            // Modified by yhasegaw.
+            JButton contractButton = new JButton(nurseRosteringPanel.getEmployeeIcon());
+            contractButton.setToolTipText("契約情報");
+            contractButton.setPreferredSize(new Dimension(30, 30));
+            contractButton.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JFrame frame = new JFrame("JOptionPane showMessageDialog example");
+                    Contract contract = employee.getContract();
+
+                    List<Skill> skillList = new ArrayList<Skill>();
+                    for (SkillProficiency prof : employee.getSkillProficiencyList()) {
+                        skillList.add(prof.getSkill());
+                    }
+
+                    List<String> dayOffList = new ArrayList<String>();
+                    for(ShiftDate shiftDate : employee.getDayOffRequestMap().keySet()){
+                        dayOffList.add(shiftDate.getDateString());
+                    }
+                    Collections.sort(dayOffList);
+                    
+                    List<String> dayOnList = new ArrayList<String>();
+                    for(ShiftDate shiftDate : employee.getDayOnRequestMap().keySet()){
+                        dayOnList.add(shiftDate.getDateString());
+                    }
+                    Collections.sort(dayOnList);                    
+                    
+                    StringBuilder str = new StringBuilder();
+                    str.append("担当者名 : " + employee.getLabel() + "\n");
+                    str.append("担当者の契約形態\n" + contract.getContractInfo() + "\n");
+                    str.append("保有スキル\n" + skillList + "\n\n");
+                    str.append("希望休暇日\n" + dayOffList + "\n");
+                    //str.append("■希望勤務日\n" + dayOnList + "\n");                    
+
+                    JOptionPane.showMessageDialog(frame, str);
+
+                }
+            });
+
             labelAndDeletePanel.add(new JLabel(nurseRosteringPanel.getEmployeeIcon()), BorderLayout.WEST);
         }
         employeeLabel = new JLabel(getEmployeeLabel());
@@ -104,13 +144,14 @@ public class EmployeePanel extends JPanel {
         if (employee != null) {
             JPanel deletePanel = new JPanel(new BorderLayout());
             deleteButton = SwingUtils.makeSmallButton(new JButton(nurseRosteringPanel.getDeleteEmployeeIcon()));
-            deleteButton.setToolTipText("Delete");
+            deleteButton.setToolTipText("削除");
             deleteButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     nurseRosteringPanel.deleteEmployee(employee);
                 }
             });
+            deleteButton.setMargin(new Insets(0, 0, 0, 0));
             deletePanel.add(deleteButton, BorderLayout.NORTH);
             labelAndDeletePanel.add(deletePanel, BorderLayout.EAST);
         }
@@ -227,11 +268,10 @@ public class EmployeePanel extends JPanel {
             Shift shift = shiftAssignment.getShift();
             ShiftType shiftType = shift.getShiftType();
             // Tooltip
-            putValue(SHORT_DESCRIPTION, "<html>Date: " + shift.getShiftDate().getLabel() + "<br/>"
-                    + "Shift type: " + shiftType.getLabel() + " (from " + shiftType.getStartTimeString()
-                    + " to " + shiftType.getEndTimeString() + ")<br/>"
-                    + "Employee: " + (employee == null ? "unassigned" : employee.getLabel())
-                    + "</html>");
+            putValue(SHORT_DESCRIPTION,
+                    "<html>日付: " + shift.getShiftDate().getLabel() + "<br/>" + "シフトタイプ: " + shiftType.getLabel() + " ("
+                            + shiftType.getStartTimeString() + " 〜 " + shiftType.getEndTimeString() + ")<br/>" + "担当者: "
+                            + (employee == null ? "未割り当て" : employee.getLabel()) + "</html>");
         }
 
         @Override

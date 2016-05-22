@@ -52,7 +52,7 @@ public class ConstraintMatchesDialog extends JDialog {
 
     public ConstraintMatchesDialog(SolverAndPersistenceFrame solverAndPersistenceFrame,
             SolutionBusiness solutionBusiness) {
-        super(solverAndPersistenceFrame, "Constraint matches", true);
+        super(solverAndPersistenceFrame, "マッチした制約条件", true);
         this.solutionBusiness = solutionBusiness;
     }
 
@@ -67,7 +67,7 @@ public class ConstraintMatchesDialog extends JDialog {
         buttonPanel.add(new JButton(okAction));
         if (!solutionBusiness.isConstraintMatchEnabled()) {
             JPanel unsupportedPanel = new JPanel(new BorderLayout());
-            JLabel unsupportedLabel = new JLabel("Constraint matches are not supported with this ScoreDirector.");
+            JLabel unsupportedLabel = new JLabel("選択された制約タイプにマッチしたパターン");
             unsupportedPanel.add(unsupportedLabel, BorderLayout.CENTER);
             unsupportedPanel.add(buttonPanel, BorderLayout.SOUTH);
             setContentPane(unsupportedPanel);
@@ -148,15 +148,15 @@ public class ConstraintMatchesDialog extends JDialog {
         public String getColumnName(int columnIndex) {
             switch (columnIndex) {
                 case 0:
-                    return "Constraint package";
+                    return "制約条件のパッケージ";
                 case 1:
-                    return "Constraint name";
+                    return "制約条件名";
                 case 2:
-                    return "Score level";
+                    return "スコアレベル";
                 case 3:
-                    return "Match count";
+                    return "マッチング回数";
                 case 4:
-                    return "Weight total";
+                    return "重み付け合計";
                 default:
                     throw new IllegalStateException("The columnIndex (" + columnIndex + ") is invalid.");
             }

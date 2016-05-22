@@ -99,7 +99,7 @@ public class OptaPlannerExamplesApp extends JFrame {
     private Container createContentPane() {
         JPanel contentPane = new JPanel(new BorderLayout(5, 5));
         contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        JLabel titleLabel = new JLabel("Which example do you want to see?", JLabel.CENTER);
+        JLabel titleLabel = new JLabel("どのサンプルを見たいですか？", JLabel.CENTER);
         titleLabel.setFont(titleLabel.getFont().deriveFont(20.0f));
         contentPane.add(titleLabel, BorderLayout.NORTH);
         JScrollPane examplesScrollPane = new JScrollPane(createExamplesPanel());
@@ -136,7 +136,7 @@ public class OptaPlannerExamplesApp extends JFrame {
 
     private JPanel createBasicExamplesPanel() {
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
-        TitledBorder titledBorder = BorderFactory.createTitledBorder("Basic examples");
+        TitledBorder titledBorder = BorderFactory.createTitledBorder("基本サンプル");
         titledBorder.setTitleColor(TangoColorFactory.CHAMELEON_3);
         panel.setBorder(BorderFactory.createCompoundBorder(titledBorder,
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)));
@@ -151,7 +151,7 @@ public class OptaPlannerExamplesApp extends JFrame {
 
     private JPanel createRealExamplesPanel() {
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
-        TitledBorder titledBorder = BorderFactory.createTitledBorder("Real examples");
+        TitledBorder titledBorder = BorderFactory.createTitledBorder("実用的サンプル");
         titledBorder.setTitleColor(TangoColorFactory.BUTTER_3);
         panel.setBorder(BorderFactory.createCompoundBorder(titledBorder,
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)));
@@ -166,7 +166,7 @@ public class OptaPlannerExamplesApp extends JFrame {
 
     private JPanel createDifficultExamplesPanel() {
         JPanel panel = new JPanel(new GridLayout(0, 1, 5, 5));
-        TitledBorder titledBorder = BorderFactory.createTitledBorder("Difficult examples");
+        TitledBorder titledBorder = BorderFactory.createTitledBorder("本格的サンプル");
         titledBorder.setTitleColor(TangoColorFactory.SCARLET_3);
         panel.setBorder(BorderFactory.createCompoundBorder(titledBorder,
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)));
@@ -214,7 +214,7 @@ public class OptaPlannerExamplesApp extends JFrame {
 
     private JPanel createDescriptionPanel() {
         JPanel descriptionPanel = new JPanel(new BorderLayout(2, 2));
-        descriptionPanel.add(new JLabel("Description"), BorderLayout.NORTH);
+        descriptionPanel.add(new JLabel("説明"), BorderLayout.NORTH);
         descriptionTextArea = new JTextArea(8, 65);
         descriptionTextArea.setEditable(false);
         descriptionTextArea.setLineWrap(true);
@@ -228,7 +228,7 @@ public class OptaPlannerExamplesApp extends JFrame {
         JPanel extraPanel = new JPanel(new GridLayout(0, 1, 5, 5));
         extraPanel.add(new JPanel());
         webExamplesDialog = new WebExamplesDialog();
-        Action webExamplesAction = new AbstractAction("Show web examples") {
+        Action webExamplesAction = new AbstractAction("Webサンプルを表示") {
             @Override
             public void actionPerformed(ActionEvent event) {
                 webExamplesDialog.setLocationRelativeTo(OptaPlannerExamplesApp.this);
@@ -238,7 +238,7 @@ public class OptaPlannerExamplesApp extends JFrame {
         extraPanel.add(new JButton(webExamplesAction));
         Action homepageAction = new OpenBrowserAction("www.optaplanner.org", "http://www.optaplanner.org");
         extraPanel.add(new JButton(homepageAction));
-        Action documentationAction = new OpenBrowserAction("Documentation", "http://www.optaplanner.org/learn/documentation.html");
+        Action documentationAction = new OpenBrowserAction("ドキュメント", "http://www.optaplanner.org/learn/documentation.html");
         extraPanel.add(new JButton(documentationAction));
         return extraPanel;
     }
@@ -265,7 +265,7 @@ public class OptaPlannerExamplesApp extends JFrame {
     private class WebExamplesDialog extends JDialog {
 
         private WebExamplesDialog() {
-            super(OptaPlannerExamplesApp.this, "Web examples", true);
+            super(OptaPlannerExamplesApp.this, "Webサンプル", true);
             JPanel contentPanel = new JPanel(new BorderLayout(5, 5));
             contentPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             contentPanel.add(createMiddlePanel(), BorderLayout.CENTER);

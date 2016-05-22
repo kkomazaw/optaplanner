@@ -93,7 +93,7 @@ public class EmployeeWeekendSequence implements Comparable<EmployeeWeekendSequen
 
     @Override
     public String toString() {
-        return employee + " is working the weekend of " + firstSundayIndex + " - " + lastSundayIndex;
+        return employee + " が次の週末勤務しています: " + firstSundayIndex + " - " + lastSundayIndex;
     }
 
     public int getWeekendLength() {

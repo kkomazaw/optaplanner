@@ -38,9 +38,9 @@ public class NurseRosteringApp extends CommonApp<NurseRoster> {
     }
 
     public NurseRosteringApp() {
-        super("Employee rostering",
-                "Official competition name: INRC2010 - Nurse rostering\n\n" +
-                        "Assign shifts to employees.",
+        super("従業員のシフト管理",
+                "このサンプルは国際的なコンペティション INRC2010 - Nurse rostering\n\n" +
+                        "の仕様に基づいて作成されています。",
                 SOLVER_CONFIG,
                 NurseRosteringPanel.LOGO_PATH);
     }

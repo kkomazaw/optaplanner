@@ -87,11 +87,11 @@ public class NurseRosteringPanel extends SolutionPanel<NurseRoster> {
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout(20, 0));
         JPanel planningWindowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        planningWindowPanel.add(new JLabel("Planning window start:"));
+        planningWindowPanel.add(new JLabel("計画開始日:"));
         planningWindowStartField = new JTextField(10);
         planningWindowStartField.setEditable(false);
         planningWindowPanel.add(planningWindowStartField);
-        advancePlanningWindowStartAction = new AbstractAction("Advance 1 day into the future") {
+        advancePlanningWindowStartAction = new AbstractAction("日付を１日進める") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 advancePlanningWindowStart();
@@ -100,7 +100,7 @@ public class NurseRosteringPanel extends SolutionPanel<NurseRoster> {
         advancePlanningWindowStartAction.setEnabled(false);
         planningWindowPanel.add(new JButton(advancePlanningWindowStartAction));
         headerPanel.add(planningWindowPanel, BorderLayout.WEST);
-        JLabel shiftTypeExplanation = new JLabel("E = Early shift, L = Late shift, ...");
+        JLabel shiftTypeExplanation = new JLabel("E: 早番(6:30-14:30), L: 遅番(14:30-22:30), D: 昼勤(8:30-16:30), N: 夜勤(22:30-6:30), DH: LDR(8:30-16:30)");
         headerPanel.add(shiftTypeExplanation, BorderLayout.CENTER);
         return headerPanel;
     }

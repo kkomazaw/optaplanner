@@ -149,7 +149,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
 
     private JComponent createQuickOpenPanel() {
         JPanel quickOpenPanel = new JPanel(new BorderLayout());
-        JLabel quickOpenLabel = new JLabel("Quick open");
+        JLabel quickOpenLabel = new JLabel("データパターン");
         quickOpenLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         quickOpenPanel.add(quickOpenLabel, BorderLayout.NORTH);
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
@@ -164,7 +164,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
         quickOpenUnsolvedPanel = new JPanel();
         quickOpenUnsolvedActionList = new ArrayList<>();
         List<File> unsolvedFileList = solutionBusiness.getUnsolvedFileList();
-        return createQuickOpenPanel(quickOpenUnsolvedPanel, "Unsolved dataset", quickOpenUnsolvedActionList,
+        return createQuickOpenPanel(quickOpenUnsolvedPanel, "未確定のデータ", quickOpenUnsolvedActionList,
                 unsolvedFileList);
     }
 
@@ -172,7 +172,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
         quickOpenSolvedPanel = new JPanel();
         quickOpenSolvedActionList = new ArrayList<>();
         List<File> solvedFileList = solutionBusiness.getSolvedFileList();
-        return createQuickOpenPanel(quickOpenSolvedPanel, "Solved dataset", quickOpenSolvedActionList,
+        return createQuickOpenPanel(quickOpenSolvedPanel, "確定済みのデータ", quickOpenSolvedActionList,
                 solvedFileList);
     }
 
@@ -286,7 +286,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
     private class SolveAction extends AbstractAction {
 
         public SolveAction() {
-            super("Solve", new ImageIcon(SolverAndPersistenceFrame.class.getResource("solveAction.png")));
+            super("計算", new ImageIcon(SolverAndPersistenceFrame.class.getResource("solveAction.png")));
         }
 
         @Override
@@ -332,14 +332,14 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
     private class TerminateSolvingEarlyAction extends AbstractAction {
 
         public TerminateSolvingEarlyAction() {
-            super("Terminate solving early",
+            super("計算を停止する",
                     new ImageIcon(SolverAndPersistenceFrame.class.getResource("terminateSolvingEarlyAction.png")));
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             terminateSolvingEarlyAction.setEnabled(false);
-            progressBar.setString("Terminating...");
+            progressBar.setString("停止中...");
             // This async, so it doesn't stop the solving immediately
             solutionBusiness.terminateSolvingEarly();
         }
@@ -348,7 +348,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
 
     private class OpenAction extends AbstractAction {
 
-        private static final String NAME = "Open...";
+        private static final String NAME = "開く...";
         private JFileChooser fileChooser;
 
         public OpenAction() {
@@ -386,7 +386,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
 
     private class SaveAction extends AbstractAction {
 
-        private static final String NAME = "Save as...";
+        private static final String NAME = "保存...";
         private JFileChooser fileChooser;
 
         public SaveAction() {
@@ -430,7 +430,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
 
     private class ImportAction extends AbstractAction {
 
-        private static final String NAME = "Import...";
+        private static final String NAME = "インポート...";
         private JFileChooser fileChooser;
 
         public ImportAction() {
@@ -497,7 +497,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
 
     private class ExportAction extends AbstractAction {
 
-        private static final String NAME = "Export as...";
+        private static final String NAME = "エクスポート...";
         private final JFileChooser fileChooser;
 
         public ExportAction() {
@@ -550,7 +550,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
         usageExplanationPanel.add(usageExplanationLabel, BorderLayout.CENTER);
         JPanel descriptionPanel = new JPanel(new BorderLayout(2, 2));
         descriptionPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        descriptionPanel.add(new JLabel("Example description"), BorderLayout.NORTH);
+        descriptionPanel.add(new JLabel("サンプルの説明"), BorderLayout.NORTH);
         JTextArea descriptionTextArea = new JTextArea(8, 70);
         descriptionTextArea.setEditable(false);
         descriptionTextArea.setText(solutionBusiness.getAppDescription());
@@ -574,12 +574,12 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
         showConstraintMatchesDialogAction = new ShowConstraintMatchesDialogAction();
         showConstraintMatchesDialogAction.setEnabled(false);
         scorePanel.add(new JButton(showConstraintMatchesDialogAction), BorderLayout.WEST);
-        scoreField = new JTextField("Score:");
+        scoreField = new JTextField("スコア:");
         scoreField.setEditable(false);
         scoreField.setForeground(Color.BLACK);
         scoreField.setBorder(BorderFactory.createLoweredBevelBorder());
         scorePanel.add(scoreField, BorderLayout.CENTER);
-        refreshScreenDuringSolvingCheckBox = new JCheckBox("Refresh screen during solving",
+        refreshScreenDuringSolvingCheckBox = new JCheckBox("計算中にスクリーンをリフレッシュ",
                 solutionPanel.isRefreshScreenDuringSolving());
         scorePanel.add(refreshScreenDuringSolvingCheckBox, BorderLayout.EAST);
         return scorePanel;
@@ -588,7 +588,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
     private class ShowConstraintMatchesDialogAction extends AbstractAction {
 
         public ShowConstraintMatchesDialogAction() {
-            super("Constraint matches", new ImageIcon(SolverAndPersistenceFrame.class.getResource("showConstraintMatchesDialogAction.png")));
+            super("マッチした制約パターン", new ImageIcon(SolverAndPersistenceFrame.class.getResource("showConstraintMatchesDialogAction.png")));
         }
 
         @Override
@@ -629,7 +629,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
         solutionPanel.setEnabled(!solving);
         progressBar.setIndeterminate(solving);
         progressBar.setStringPainted(solving);
-        progressBar.setString(solving ? "Solving..." : null);
+        progressBar.setString(solving ? "計算中..." : null);
         showConstraintMatchesDialogAction.setEnabled(!solving);
     }
 
@@ -645,7 +645,7 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
         // TODO Fix after https://issues.jboss.org/browse/PLANNER-405
         int uninitializedVariableCount = solutionBusiness.getUninitializedVariableCount();
         scoreField.setForeground(determineScoreFieldForeground(uninitializedVariableCount, score));
-        scoreField.setText("Latest best score: " + ScoreUtils.getScoreWithUninitializedPrefix(uninitializedVariableCount, score));
+        scoreField.setText("最新のベストスコア: " + ScoreUtils.getScoreWithUninitializedPrefix(uninitializedVariableCount, score));
     }
 
     private Color determineScoreFieldForeground(int uninitializedVariableCount, Score<?> score) {

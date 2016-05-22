@@ -54,7 +54,7 @@ public class WorkBeforeFreeSequencePattern extends Pattern {
 
     @Override
     public String toString() {
-        return "Work " + workShiftType + " on " + workDayOfWeek + " followed by " + freeDayLength + " free days";
+        return "勤務タイプ " + workShiftType + " on " + workDayOfWeek + " followed by " + freeDayLength + " free days";
     }
 
 }
