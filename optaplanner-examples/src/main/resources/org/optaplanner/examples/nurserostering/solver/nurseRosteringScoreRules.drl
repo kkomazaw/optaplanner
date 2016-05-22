@@ -58,11 +58,26 @@ import org.optaplanner.examples.nurserostering.solver.drools.EmployeeWorkSequenc
 global HardSoftScoreHolder scoreHolder;
 
 // ############################################################################
-// Hard constraints
+// ハード制約
 // ############################################################################
 
-// A nurse can only work one shift per day, i.e. no two shift can be assigned to the same nurse on a day.
-rule "oneShiftPerDay"
+// This rule is build in
+// All demanded shifts must be assigned to a nurse
+//rule "requiredEmployeeSizePerShift"
+//    when
+//        $shift : Shift(requiredEmployeeSize > 0, $requiredEmployeeSize : requiredEmployeeSize)
+//
+//        $totalEmployeeSize : Number(intValue != $requiredEmployeeSize) from accumulate(
+//            $assignment : ShiftAssignment(shift == $shift),
+//            count($assignment)
+//        )
+//    then
+//        scoreHolder.addHardConstraintMatch(kcontext,
+//                - Math.abs($requiredEmployeeSize - $totalEmployeeSize.intValue());
+//end
+
+// a nurse can only work one shift per day, i.e. no two shift can be assigned to the same nurse on a day.
+rule "1日にシフトは１回のみ"
     when
         ShiftAssignment($leftId : id, $employee : employee, $shiftDate : shiftDate, employee != null)
         ShiftAssignment(employee == $employee, shiftDate == $shiftDate, id > $leftId)
@@ -71,16 +86,16 @@ rule "oneShiftPerDay"
 end
 
 // ############################################################################
-// Soft constraints
+// ソフト制約
 // ############################################################################
 
-rule "insertEmployeeAssignmentTotal"
+rule "管理用EmployeeAssignmentTotalの作成"
         salience 1 // Do these rules first (optional, for performance)
     when
         MinMaxContractLine(contractLineType == ContractLineType.TOTAL_ASSIGNMENTS, enabled == true,
             $contract : contract)
         $employee : Employee(contract == $contract)
-        $assignmentTotal : Long() from accumulate(
+        $assignmentTotal : Number() from accumulate(
             $assignment : ShiftAssignment(employee == $employee),
             count($assignment)
         )
@@ -89,7 +104,7 @@ rule "insertEmployeeAssignmentTotal"
 end
 
 // Minimum number of assignments
-rule "minimumTotalAssignments"
+rule "合計の勤務シフト数の最小値を下回らないこと"
     when
         $contractLine : MinMaxContractLine(
             contractLineType == ContractLineType.TOTAL_ASSIGNMENTS, minimumEnabled == true,
@@ -102,7 +117,7 @@ rule "minimumTotalAssignments"
 end
 
 // Maximum number of assignments
-rule "maximumTotalAssignments"
+rule "合計の勤務シフト数の最大値を超えないこと"
     when
         $contractLine : MinMaxContractLine(
             contractLineType == ContractLineType.TOTAL_ASSIGNMENTS, maximumEnabled == true,
@@ -115,7 +130,7 @@ rule "maximumTotalAssignments"
 end
 
 
-rule "insertEmployeeConsecutiveAssignmentStart"
+rule "管理用EmployeeConsecutiveAssignmentStartの作成"
         salience 2 // Do these rules first (optional, for performance)
     when
         ShiftAssignment(
@@ -128,7 +143,7 @@ rule "insertEmployeeConsecutiveAssignmentStart"
     then
         insertLogical(new EmployeeConsecutiveAssignmentStart($employee, $shiftDate));
 end
-rule "insertEmployeeConsecutiveAssignmentEnd"
+rule "管理用EmployeeConsecutiveAssignmentEndの作成"
         salience 2 // Do these rules first (optional, for performance)
     when
         ShiftAssignment(
@@ -142,7 +157,7 @@ rule "insertEmployeeConsecutiveAssignmentEnd"
         insertLogical(new EmployeeConsecutiveAssignmentEnd($employee, $shiftDate));
 end
 
-rule "insertEmployeeWorkSequence"
+rule "管理用EmployeeWorkSequenceの作成"
         salience 1 // Do these rules first (optional, for performance)
     when
         EmployeeConsecutiveAssignmentStart(
@@ -166,7 +181,7 @@ rule "insertEmployeeWorkSequence"
 end
 
 // Minimum number of consecutive working days
-rule "minimumConsecutiveWorkingDays"
+rule "連続勤務日数の最小値を下回らないこと"
     when
         $contractLine : MinMaxContractLine(
             contractLineType == ContractLineType.CONSECUTIVE_WORKING_DAYS, minimumEnabled == true,
@@ -184,7 +199,7 @@ rule "minimumConsecutiveWorkingDays"
 end
 
 // Maximum number of consecutive working days
-rule "maximumConsecutiveWorkingDays"
+rule "連続勤務日数の最大値を超えないこと"
     when
         $contractLine : MinMaxContractLine(
             contractLineType == ContractLineType.CONSECUTIVE_WORKING_DAYS, maximumEnabled == true,
@@ -202,7 +217,7 @@ rule "maximumConsecutiveWorkingDays"
 end
 
 
-rule "insertEmployeeFreeSequence"
+rule "管理用EmployeeFreeSequenceの作成"
         salience 1 // Do these rules first (optional, for performance)
     when
         EmployeeConsecutiveAssignmentEnd(
@@ -224,7 +239,7 @@ rule "insertEmployeeFreeSequence"
     then
         insertLogical(new EmployeeFreeSequence($employee, $firstDayIndexMinusOne + 1, $lastDayIndexPlusOne - 1));
 end
-rule "insertFirstEmployeeFreeSequence"
+rule "管理用FirstEmployeeFreeSequenceの作成"
         salience 1 // Do these rules first (optional, for performance)
     when
         EmployeeConsecutiveAssignmentStart(
@@ -241,7 +256,7 @@ rule "insertFirstEmployeeFreeSequence"
     then
         insertLogical(new EmployeeFreeSequence($employee, $firstDayIndex, $lastDayIndexPlusOne - 1));
 end
-rule "insertLastEmployeeFreeSequence"
+rule "管理用LastEmployeeFreeSequenceの作成"
         salience 1 // Do these rules first (optional, for performance)
     when
         EmployeeConsecutiveAssignmentEnd(
@@ -258,7 +273,7 @@ rule "insertLastEmployeeFreeSequence"
     then
         insertLogical(new EmployeeFreeSequence($employee, $firstDayIndexMinusOne + 1, $lastDayIndex));
 end
-rule "insertEntireEmployeeFreeSequence"
+rule "管理用EntireEmployeeFreeSequenceの作成"
         salience 1 // Do these rules first (optional, for performance)
     when
         $employee : Employee()
@@ -272,7 +287,7 @@ rule "insertEntireEmployeeFreeSequence"
 end
 
 // Minimum number of consecutive free days
-rule "minimumConsecutiveFreeDays"
+rule "非勤務日の連続日数の最小値を下回らないこと"
     when
         $contractLine : MinMaxContractLine(
             contractLineType == ContractLineType.CONSECUTIVE_FREE_DAYS, minimumEnabled == true,
@@ -290,7 +305,7 @@ rule "minimumConsecutiveFreeDays"
 end
 
 // Maximum number of consecutive free days
-rule "maximumConsecutiveFreeDays"
+rule "非勤務日の連続日数が最大値を超えないこと"
     when
         $contractLine : MinMaxContractLine(
             contractLineType == ContractLineType.CONSECUTIVE_FREE_DAYS, maximumEnabled == true,
@@ -308,7 +323,7 @@ rule "maximumConsecutiveFreeDays"
 end
 
 
-rule "insertEmployeeConsecutiveWeekendAssignmentStart"
+rule "管理用EmployeeConsecutiveWeekendAssignmentStartの作成"
         salience 2 // Do these rules first (optional, for performance)
     when
         ShiftAssignment(
@@ -325,7 +340,7 @@ rule "insertEmployeeConsecutiveWeekendAssignmentStart"
     then
         insertLogical(new EmployeeConsecutiveWeekendAssignmentStart($employee, $weekendSundayIndex));
 end
-rule "insertEmployeeConsecutiveWeekendAssignmentEnd"
+rule "管理用EmployeeConsecutiveWeekendAssignmentEndの作成"
         salience 2 // Do these rules first (optional, for performance)
     when
         ShiftAssignment(
@@ -343,7 +358,7 @@ rule "insertEmployeeConsecutiveWeekendAssignmentEnd"
         insertLogical(new EmployeeConsecutiveWeekendAssignmentEnd($employee, $weekendSundayIndex));
 end
 
-rule "insertEmployeeWeekendSequence"
+rule "管理用EmployeeWeekendSequenceの作成"
     when
         EmployeeConsecutiveWeekendAssignmentStart(
             $employee : employee,
@@ -366,7 +381,7 @@ rule "insertEmployeeWeekendSequence"
 end
 
 // Minimum number of consecutive working weekends
-rule "minimumConsecutiveWorkingWeekends"
+rule "連続して週末に勤務する日数の最小値を下回らないこと"
     when
         $contractLine : MinMaxContractLine(
             contractLineType == ContractLineType.CONSECUTIVE_WORKING_WEEKENDS, minimumEnabled == true,
@@ -385,7 +400,7 @@ rule "minimumConsecutiveWorkingWeekends"
 end
 
 // Maximum number of consecutive working weekends
-rule "maximumConsecutiveWorkingWeekends"
+rule "連続して週末に勤務する日数の最大値を超えないこと"
     when
         $contractLine : MinMaxContractLine(
             contractLineType == ContractLineType.CONSECUTIVE_WORKING_WEEKENDS, maximumEnabled == true,
@@ -405,7 +420,7 @@ end
 
 
 // Complete weekends
-rule "startOnNotFirstDayOfWeekend"
+rule "週末勤務の契約の場合週末の初日に勤務開始すること"
     when
         $contractLine : BooleanContractLine(
             contractLineType == ContractLineType.COMPLETE_WEEKENDS, enabled == true,
@@ -419,7 +434,7 @@ rule "startOnNotFirstDayOfWeekend"
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $distanceToFirstDayOfWeekend * $contractLine.getWeight());
 end
-rule "endOnNotLastDayOfWeekend"
+rule "週末勤務の契約の場合週末の最終日に勤務終了すること"
     when
         $contractLine : BooleanContractLine(
             contractLineType == ContractLineType.COMPLETE_WEEKENDS, enabled == true,
@@ -435,14 +450,14 @@ rule "endOnNotLastDayOfWeekend"
 end
 
 // Identical shiftTypes during a weekend
-rule "identicalShiftTypesDuringWeekend"
+rule "週末のシフトタイプが同一の契約の場合"
     when
         $contractLine : BooleanContractLine(contractLineType == ContractLineType.IDENTICAL_SHIFT_TYPES_DURING_WEEKEND,
             enabled == true, $contract : contract)
         $employee : Employee(contract == $contract, $weekendLength : weekendLength)
         ShiftDate(dayOfWeek == DayOfWeek.SUNDAY, $sundayIndex : dayIndex)
         $shiftType : ShiftType()
-        $weekendAssignmentTotal : Long(this > 0 && < $weekendLength) from accumulate(
+        $weekendAssignmentTotal : Number(intValue > 0 && < $weekendLength) from accumulate(
             $assignment : ShiftAssignment(
                 weekend == true,
                 weekendSundayIndex == $sundayIndex,
@@ -456,14 +471,14 @@ rule "identicalShiftTypesDuringWeekend"
 end
 
 // Requested day on/off
-rule "dayOffRequest"
+rule "休日の希望を優先すること"
     when
         DayOffRequest($employee : employee, $shiftDate : shiftDate, $weight : weight)
         ShiftAssignment(employee == $employee, shiftDate == $shiftDate)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
 end
-rule "dayOnRequest"
+rule "勤務日の希望を優先すること"
     when
         DayOnRequest($employee : employee, $shiftDate : shiftDate, $weight : weight)
         not ShiftAssignment(employee == $employee, shiftDate == $shiftDate)
@@ -472,14 +487,14 @@ rule "dayOnRequest"
 end
 
 // Requested shift on/off
-rule "shiftOffRequest"
+rule "休みたいシフトの希望を優先すること"
     when
         ShiftOffRequest($employee : employee, $shift : shift, $weight : weight)
         ShiftAssignment(employee == $employee, shift == $shift)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
 end
-rule "shiftOnRequest"
+rule "勤務したいシフトの希望を優先すること"
     when
         ShiftOnRequest($employee : employee, $shift : shift, $weight : weight)
         not ShiftAssignment(employee == $employee, shift == $shift)
@@ -488,7 +503,7 @@ rule "shiftOnRequest"
 end
 
 // Alternative skill
-rule "alternativeSkill"
+rule "スキルに応じたシフトを割り当てること"
     when
         $contractLine : BooleanContractLine(contractLineType == ContractLineType.ALTERNATIVE_SKILL_CATEGORY,
             $contract : contract)
@@ -500,7 +515,7 @@ rule "alternativeSkill"
 end
 
 // Unwanted patterns
-rule "unwantedPatternFreeBefore2DaysWithAWorkDayPattern"
+rule "勤務日の前2日間に休日を入れたくないパターン"
     when
         $pattern : FreeBefore2DaysWithAWorkDayPattern(
             $freeDayOfWeek : freeDayOfWeek
@@ -549,7 +564,7 @@ end
 //    then
 //        scoreHolder.addSoftConstraintMatch(kcontext, - $pattern.getWeight());
 //end
-rule "unwantedPatternShiftType2DaysPattern"
+rule "2日間のシフトパターンで希望しないもの"
     when
         $pattern : ShiftType2DaysPattern(
             $dayIndex0ShiftType : dayIndex0ShiftType,
@@ -572,7 +587,7 @@ rule "unwantedPatternShiftType2DaysPattern"
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $pattern.getWeight());
 end
-rule "unwantedPatternShiftType3DaysPattern"
+rule "3日間のシフトパターンで希望しないもの"
     when
         $pattern : ShiftType3DaysPattern(
             $dayIndex0ShiftType : dayIndex0ShiftType,
