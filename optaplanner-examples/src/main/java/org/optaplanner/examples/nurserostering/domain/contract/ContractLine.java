@@ -27,8 +27,8 @@ import org.optaplanner.examples.common.domain.AbstractPersistable;
 })
 public abstract class ContractLine extends AbstractPersistable {
 
-    private Contract contract;
-    private ContractLineType contractLineType;
+    protected Contract contract;
+    protected ContractLineType contractLineType;
 
     public Contract getContract() {
         return contract;

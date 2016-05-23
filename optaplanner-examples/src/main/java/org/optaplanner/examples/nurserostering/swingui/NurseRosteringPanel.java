@@ -61,8 +61,8 @@ public class NurseRosteringPanel extends SolutionPanel<NurseRoster> {
     private Map<Employee, EmployeePanel> employeeToPanelMap;
 
     public NurseRosteringPanel() {
-        employeeIcon = new ImageIcon(getClass().getResource("employee.png"));
-        deleteEmployeeIcon = new ImageIcon(getClass().getResource("deleteEmployee.png"));
+        employeeIcon = new ImageIcon(getClass().getResource("operator.png"));
+        deleteEmployeeIcon = new ImageIcon(getClass().getResource("delete.png"));
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
         createEmployeeListPanel();
@@ -118,6 +118,10 @@ public class NurseRosteringPanel extends SolutionPanel<NurseRoster> {
     @Override
     public boolean isRefreshScreenDuringSolving() {
         return true;
+    }
+
+    public NurseRoster getNurseRoster() {
+        return (NurseRoster) solutionBusiness.getSolution();
     }
 
     @Override

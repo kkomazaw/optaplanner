@@ -17,9 +17,13 @@
 package org.optaplanner.examples.common.persistence;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.persistence.xstream.impl.domain.solution.XStreamSolutionFileIO;
+import org.optaplanner.examples.nurserostering.domain.Employee;
+import org.optaplanner.examples.nurserostering.domain.NurseRoster;
+import org.optaplanner.examples.nurserostering.domain.SkillProficiency;
 
 /**
  * @param <Solution_> the solution type, the class with the {@link PlanningSolution} annotation

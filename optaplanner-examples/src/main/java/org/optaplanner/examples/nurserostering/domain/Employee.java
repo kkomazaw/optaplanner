@@ -16,6 +16,8 @@
 
 package org.optaplanner.examples.nurserostering.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -26,6 +28,7 @@ import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
 import org.optaplanner.examples.nurserostering.domain.request.ShiftOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.ShiftOnRequest;
+
 
 @XStreamAlias("Employee")
 public class Employee extends AbstractPersistable implements Labeled {
@@ -38,6 +41,18 @@ public class Employee extends AbstractPersistable implements Labeled {
     private Map<ShiftDate, DayOnRequest> dayOnRequestMap;
     private Map<Shift, ShiftOffRequest> shiftOffRequestMap;
     private Map<Shift, ShiftOnRequest> shiftOnRequestMap;
+
+    private List<SkillProficiency> skillProficiencyList;
+
+    public List<SkillProficiency> getSkillProficiencyList() {
+        if (skillProficiencyList == null)
+            skillProficiencyList = new ArrayList<SkillProficiency>();
+        return skillProficiencyList;
+    }
+
+    public void setSkillProficiencyList(List<SkillProficiency> skillProficiencyList) {
+        this.skillProficiencyList = skillProficiencyList;
+    }
 
     public String getCode() {
         return code;

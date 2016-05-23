@@ -19,13 +19,13 @@ package org.optaplanner.examples.nurserostering.domain;
 import java.util.Calendar;
 
 public enum DayOfWeek {
-    MONDAY("月"),
-    TUESDAY("火"),
-    WEDNESDAY("水"),
-    THURSDAY("木"),
-    FRIDAY("金"),
-    SATURDAY("土"),
-    SUNDAY("日");
+    MONDAY("Monday"),
+    TUESDAY("Tuesday"),
+    WEDNESDAY("Wednesday"),
+    THURSDAY("Thursday"),
+    FRIDAY("Friday"),
+    SATURDAY("Saturday"),
+    SUNDAY("Sunday");
 
     public static DayOfWeek valueOfCalendar(int calendarDayInWeek) {
         switch (calendarDayInWeek) {

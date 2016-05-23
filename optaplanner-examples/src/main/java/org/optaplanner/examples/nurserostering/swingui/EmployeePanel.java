@@ -20,17 +20,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -41,7 +47,10 @@ import org.optaplanner.examples.nurserostering.domain.Shift;
 import org.optaplanner.examples.nurserostering.domain.ShiftAssignment;
 import org.optaplanner.examples.nurserostering.domain.ShiftDate;
 import org.optaplanner.examples.nurserostering.domain.ShiftType;
+import org.optaplanner.examples.nurserostering.domain.Skill;
+import org.optaplanner.examples.nurserostering.domain.SkillProficiency;
 import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
+import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 import org.optaplanner.swing.impl.SwingUtils;
 import org.optaplanner.swing.impl.TangoColorFactory;
 
@@ -159,7 +168,7 @@ public class EmployeePanel extends JPanel {
                 (int) labelAndDeletePanel.getPreferredSize().getHeight()));
         add(labelAndDeletePanel, BorderLayout.WEST);
         resetShiftListPanel();
-        numberOfShiftAssignmentsLabel = new JLabel("0 assignments", JLabel.RIGHT);
+        numberOfShiftAssignmentsLabel = new JLabel("0 割り当て", JLabel.RIGHT);
         numberOfShiftAssignmentsLabel.setPreferredSize(new Dimension(EAST_HEADER_WIDTH, 20));
         numberOfShiftAssignmentsLabel.setEnabled(false);
         add(numberOfShiftAssignmentsLabel, BorderLayout.EAST);
@@ -255,7 +264,7 @@ public class EmployeePanel extends JPanel {
     }
 
     public void update() {
-        numberOfShiftAssignmentsLabel.setText(shiftAssignmentButtonMap.size() + " assignments");
+        numberOfShiftAssignmentsLabel.setText(shiftAssignmentButtonMap.size() + " シフト");
     }
 
     private class ShiftAssignmentAction extends AbstractAction {
