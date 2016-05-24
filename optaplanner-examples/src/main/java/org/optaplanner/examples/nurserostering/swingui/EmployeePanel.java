@@ -145,7 +145,8 @@ public class EmployeePanel extends JPanel {
                 }
             });
 
-            labelAndDeletePanel.add(new JLabel(nurseRosteringPanel.getEmployeeIcon()), BorderLayout.WEST);
+//            labelAndDeletePanel.add(new JLabel(nurseRosteringPanel.getEmployeeIcon()), BorderLayout.WEST);
+            labelAndDeletePanel.add(contractButton, BorderLayout.WEST);
         }
         employeeLabel = new JLabel(getEmployeeLabel());
         employeeLabel.setEnabled(false);
