@@ -28,6 +28,9 @@ import org.optaplanner.core.api.solver.event.SolverEventListener;
 import org.optaplanner.core.config.solver.EnvironmentMode;
 import org.optaplanner.core.impl.phase.Phase;
 import org.optaplanner.core.impl.phase.event.PhaseLifecycleListener;
+import org.optaplanner.core.impl.phase.event.PhaseLifecycleSupport;
+import org.optaplanner.core.impl.phase.scope.AbstractPhaseScope;
+import org.optaplanner.core.impl.phase.scope.AbstractStepScope;
 import org.optaplanner.core.impl.score.director.InnerScoreDirectorFactory;
 import org.optaplanner.core.impl.solver.event.SolverEventSupport;
 import org.optaplanner.core.impl.solver.random.RandomFactory;
@@ -47,6 +50,7 @@ public class DefaultSolver<Solution_> implements Solver<Solution_> {
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     protected SolverEventSupport<Solution_> solverEventSupport = new SolverEventSupport<>(this);
+    protected PhaseLifecycleSupport<Solution_> phaseLifecycleSupport = new PhaseLifecycleSupport<>();
 
     protected EnvironmentMode environmentMode;
     protected RandomFactory randomFactory;
@@ -119,6 +123,9 @@ public class DefaultSolver<Solution_> implements Solver<Solution_> {
 
     public void setPhaseList(List<Phase> phaseList) {
         this.phaseList = phaseList;
+        for (Phase<Solution_> phase : phaseList) {
+            phase.setSolverPhaseLifecycleSupport(phaseLifecycleSupport);
+        }
     }
 
     public DefaultSolverScope<Solution_> getSolverScope() {
@@ -209,7 +216,8 @@ public class DefaultSolver<Solution_> implements Solver<Solution_> {
         solverScope.getScoreDirector().resetCalculationCount();
         solverScope.setWorkingSolutionFromBestSolution();
         bestSolutionRecaller.solvingStarted(solverScope);
-        for (Phase phase : phaseList) {
+        phaseLifecycleSupport.fireSolvingStarted(solverScope);
+        for (Phase<Solution_> phase : phaseList) {
             phase.solvingStarted(solverScope);
         }
         int startingSolverCount = solverScope.getStartingSolverCount() + 1;
@@ -217,7 +225,7 @@ public class DefaultSolver<Solution_> implements Solver<Solution_> {
         logger.info("Solving {}: time spent ({}), best score ({}), environment mode ({}), random ({}).",
                 (startingSolverCount == 1 ? "started" : "restarted"),
                 solverScope.calculateTimeMillisSpentUpToNow(),
-                solverScope.getBestScoreWithUninitializedPrefix(),
+                solverScope.getBestScore(),
                 environmentMode.name(),
                 (randomFactory != null ? randomFactory : "not fixed"));
     }
@@ -225,7 +233,7 @@ public class DefaultSolver<Solution_> implements Solver<Solution_> {
     protected void runPhases() {
         Iterator<Phase> it = phaseList.iterator();
         while (!termination.isSolverTerminated(solverScope) && it.hasNext()) {
-            Phase phase = it.next();
+            Phase<Solution_> phase = it.next();
             phase.solve(solverScope);
             if (it.hasNext()) {
                 solverScope.setWorkingSolutionFromBestSolution();
@@ -235,9 +243,10 @@ public class DefaultSolver<Solution_> implements Solver<Solution_> {
     }
 
     public void solvingEnded(DefaultSolverScope<Solution_> solverScope) {
-        for (Phase phase : phaseList) {
+        for (Phase<Solution_> phase : phaseList) {
             phase.solvingEnded(solverScope);
         }
+        phaseLifecycleSupport.fireSolvingEnded(solverScope);
         bestSolutionRecaller.solvingEnded(solverScope);
         solverScope.endingNow();
     }
@@ -248,7 +257,7 @@ public class DefaultSolver<Solution_> implements Solver<Solution_> {
         logger.info("Solving ended: time spent ({}), best score ({}), score calculation speed ({}/sec),"
                         + " environment mode ({}).",
                 solverScope.getTimeMillisSpent(),
-                solverScope.getBestScoreWithUninitializedPrefix(),
+                solverScope.getBestScore(),
                 solverScope.getScoreCalculationSpeed(),
                 environmentMode.name());
         solving.set(false);
@@ -272,13 +281,9 @@ public class DefaultSolver<Solution_> implements Solver<Solution_> {
             }
             basicPlumbingTermination.endProblemFactChangesProcessing();
             Solution_ newBestSolution = solverScope.getScoreDirector().cloneWorkingSolution();
-            // TODO BestSolutionRecaller.solverStarted() already calls countUninitializedVariables()
-            int newBestUninitializedVariableCount = solverScope.getSolutionDescriptor()
-                    .countUninitializedVariables(newBestSolution);
-            bestSolutionRecaller.updateBestSolution(solverScope,
-                    newBestSolution, newBestUninitializedVariableCount);
-            logger.info("Real-time problem fact changes done: step total ({}), new {} best score ({}).",
-                    stepIndex, (newBestUninitializedVariableCount <= 0 ? "initialized" : "uninitialized"), score);
+            bestSolutionRecaller.updateBestSolution(solverScope, newBestSolution);
+            logger.info("Real-time problem fact changes done: step total ({}), new best score ({}).",
+                    stepIndex, score);
             return true;
         }
     }
@@ -300,16 +305,25 @@ public class DefaultSolver<Solution_> implements Solver<Solution_> {
         solverEventSupport.removeEventListener(eventListener);
     }
 
+    /**
+     * Add a {@link PhaseLifecycleListener} that is notified
+     * of {@link PhaseLifecycleListener#solvingStarted(DefaultSolverScope)} solving} events
+     * and also of the {@link PhaseLifecycleListener#phaseStarted(AbstractPhaseScope) phase}
+     * and the {@link PhaseLifecycleListener#stepStarted(AbstractStepScope)} step} starting/ending events of all phases.
+     * <p>
+     * To get notified for only 1 phase, use {@link Phase#addPhaseLifecycleListener(PhaseLifecycleListener)} instead.
+     * @param phaseLifecycleListener never null
+     */
     public void addPhaseLifecycleListener(PhaseLifecycleListener<Solution_> phaseLifecycleListener) {
-        for (Phase phase : phaseList) {
-            phase.addPhaseLifecycleListener(phaseLifecycleListener);
-        }
+        phaseLifecycleSupport.addEventListener(phaseLifecycleListener);
     }
 
+    /**
+     * @param phaseLifecycleListener never null
+     * @see #addPhaseLifecycleListener(PhaseLifecycleListener)
+     */
     public void removePhaseLifecycleListener(PhaseLifecycleListener<Solution_> phaseLifecycleListener) {
-        for (Phase phase : phaseList) {
-            phase.addPhaseLifecycleListener(phaseLifecycleListener);
-        }
+        phaseLifecycleSupport.removeEventListener(phaseLifecycleListener);
     }
 
 }

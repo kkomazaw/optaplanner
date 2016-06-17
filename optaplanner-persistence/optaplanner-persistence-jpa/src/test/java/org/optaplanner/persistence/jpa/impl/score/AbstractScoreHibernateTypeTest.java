@@ -62,21 +62,24 @@ public abstract class AbstractScoreHibernateTypeTest {
             EntityManager em = entityManagerFactory.createEntityManager();
             em.persist(jpaEntity);
             transactionManager.commit();
-        } catch (NotSupportedException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (SystemException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (RollbackException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (HeuristicMixedException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (HeuristicRollbackException e) {
+        } catch (NotSupportedException | SystemException | RollbackException | HeuristicRollbackException | HeuristicMixedException e) {
             throw new RuntimeException("Transaction failed.", e);
         }
         Long id = jpaEntity.getId();
         assertNotNull(id);
         return id;
+    }
 
+    protected <S extends Score, E extends AbstractTestJpaEntity<S>> void persistAndMerge(
+            E jpaEntity, S... newScores) {
+        Long id = persistAndAssert(jpaEntity);
+        Class<? extends AbstractTestJpaEntity> jpaEntityClass = jpaEntity.getClass();
+        S oldScore = jpaEntity.getScore();
+        for (S newScore : newScores) {
+            findAssertAndChangeScore(jpaEntityClass, id, oldScore, newScore);
+            findAndAssert(jpaEntityClass, id, newScore);
+            oldScore = newScore;
+        }
     }
 
     protected <S extends Score, E extends AbstractTestJpaEntity<S>> void findAssertAndChangeScore(
@@ -90,15 +93,7 @@ public abstract class AbstractScoreHibernateTypeTest {
             jpaEntity.setScore(newScore);
             jpaEntity = em.merge(jpaEntity);
             transactionManager.commit();
-        } catch (NotSupportedException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (SystemException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (RollbackException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (HeuristicMixedException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (HeuristicRollbackException e) {
+        } catch (NotSupportedException | SystemException | RollbackException | HeuristicRollbackException | HeuristicMixedException e) {
             throw new RuntimeException("Transaction failed.", e);
         }
     }
@@ -111,15 +106,7 @@ public abstract class AbstractScoreHibernateTypeTest {
             E jpaEntity = em.find(jpaEntityClass, id);
             assertEquals(score, jpaEntity.getScore());
             transactionManager.commit();
-        } catch (NotSupportedException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (SystemException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (RollbackException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (HeuristicMixedException e) {
-            throw new RuntimeException("Transaction failed.", e);
-        } catch (HeuristicRollbackException e) {
+        } catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException e) {
             throw new RuntimeException("Transaction failed.", e);
         }
     }

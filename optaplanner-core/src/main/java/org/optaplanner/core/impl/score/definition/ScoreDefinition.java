@@ -31,6 +31,13 @@ import org.optaplanner.core.impl.score.trend.InitializingScoreTrend;
 public interface ScoreDefinition<S extends Score> {
 
     /**
+     * Returns the label for {@link Score#getInitScore()}.
+     * @return never null
+     * @see #getLevelLabels()
+     */
+    String getInitLabel();
+
+    /**
      * Returns the length of {@link Score#toLevelNumbers()} for every {@link Score} of this definition.
      * For example: returns 2 on {@link HardSoftScoreDefinition}.
      * @return at least 1
@@ -40,6 +47,8 @@ public interface ScoreDefinition<S extends Score> {
     /**
      * Returns a label for each score level. Each label includes the suffix "score" and must start in lower case.
      * For example: returns {@code {"hard score", "soft score "}} on {@link HardSoftScoreDefinition}.
+     * <p>
+     * It does not include the {@link #getInitLabel()}.
      * @return never null, array with length of {@link #getLevelsSize()}, each element is never null
      */
     String[] getLevelLabels();
@@ -69,10 +78,12 @@ public interface ScoreDefinition<S extends Score> {
 
     /**
      * The opposite of {@link Score#toLevelNumbers()}.
+     * @param initScore <= 0, managed by OptaPlanner, needed as a parameter in the {@link Score}'s creation method,
+     * see {@link Score#getInitScore()}
      * @param levelNumbers never null
      * @return never null
      */
-    S fromLevelNumbers(Number[] levelNumbers);
+    S fromLevelNumbers(int initScore, Number[] levelNumbers);
 
     /**
      * Used by {@link DroolsScoreDirector}.
@@ -86,7 +97,7 @@ public interface ScoreDefinition<S extends Score> {
      * (while the already variables don't change).
      * @param initializingScoreTrend never null, with {@link InitializingScoreTrend#getLevelsSize()}
      * equal to {@link #getLevelsSize()}.
-     * @param score never null
+     * @param score never null, with {@link Score#getInitScore()} {@code 0}.
      * @return never null
      */
     S buildOptimisticBound(InitializingScoreTrend initializingScoreTrend, S score);
@@ -96,7 +107,7 @@ public interface ScoreDefinition<S extends Score> {
      * (while the already variables don't change).
      * @param initializingScoreTrend never null, with {@link InitializingScoreTrend#getLevelsSize()}
      * equal to {@link #getLevelsSize()}.
-     * @param score never null
+     * @param score never null, with {@link Score#getInitScore()} {@code 0}
      * @return never null
      */
     S buildPessimisticBound(InitializingScoreTrend initializingScoreTrend, S score);

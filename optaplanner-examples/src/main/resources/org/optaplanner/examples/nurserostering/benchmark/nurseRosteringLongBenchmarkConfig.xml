@@ -40,21 +40,17 @@
         <scoreDrl>org/optaplanner/examples/nurserostering/solver/nurseRosteringScoreRules.drl</scoreDrl>
       </scoreDirectorFactory>
       <termination>
-        <!--
-          Official benchmark secondsSpentLimit allowed on:
-          - ge0ffrey's main pc: sprint 11, medium 700, long 42000
-        -->
-        <secondsSpentLimit>42000</secondsSpentLimit>
+        <minutesSpentLimit>5</minutesSpentLimit>
       </termination>
-      <constructionHeuristic>
-        <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
-      </constructionHeuristic>
     </solver>
   </inheritedSolverBenchmark>
 
   <solverBenchmark>
     <name>absolute300SeqLength2and3PillarPart</name>
     <solver>
+      <constructionHeuristic>
+        <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
+      </constructionHeuristic>
       <localSearch>
         <unionMoveSelector>
           <moveListFactory>

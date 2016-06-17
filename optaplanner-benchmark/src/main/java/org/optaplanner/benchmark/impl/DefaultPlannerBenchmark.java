@@ -47,7 +47,7 @@ import org.optaplanner.core.config.util.ConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PlannerBenchmarkRunner implements PlannerBenchmark {
+public class DefaultPlannerBenchmark implements PlannerBenchmark {
 
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
     protected final transient Logger singleBenchmarkRunnerExceptionLogger = LoggerFactory.getLogger(
@@ -67,11 +67,11 @@ public class PlannerBenchmarkRunner implements PlannerBenchmark {
     private long startingSystemTimeMillis = -1L;
     private SubSingleBenchmarkRunner firstFailureSubSingleBenchmarkRunner = null;
 
-    public PlannerBenchmarkRunner(PlannerBenchmarkResult plannerBenchmarkResult) {
+    public DefaultPlannerBenchmark(PlannerBenchmarkResult plannerBenchmarkResult) {
         this(plannerBenchmarkResult, new SolverConfigContext());
     }
 
-    public PlannerBenchmarkRunner(PlannerBenchmarkResult plannerBenchmarkResult,
+    public DefaultPlannerBenchmark(PlannerBenchmarkResult plannerBenchmarkResult,
             SolverConfigContext solverConfigContext) {
         this.plannerBenchmarkResult = plannerBenchmarkResult;
         this.solverConfigContext = solverConfigContext;
@@ -280,10 +280,6 @@ public class PlannerBenchmarkRunner implements PlannerBenchmark {
             try {
                 // Explicitly returning it in the Callable guarantees memory visibility
                 subSingleBenchmarkRunner = future.get();
-                // TODO WORKAROUND Remove when PLANNER-46 is fixed.
-                if (subSingleBenchmarkRunner.getSubSingleBenchmarkResult().getAverageScore() == null) {
-                    throw new IllegalStateException("Score is null. TODO fix PLANNER-46.");
-                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 singleBenchmarkRunnerExceptionLogger.error("The subSingleBenchmarkRunner ({}) was interrupted.",
@@ -294,11 +290,6 @@ public class PlannerBenchmarkRunner implements PlannerBenchmark {
                 singleBenchmarkRunnerExceptionLogger.warn("The subSingleBenchmarkRunner ({}) failed.",
                         subSingleBenchmarkRunner, cause);
                 failureThrowable = cause;
-            } catch (IllegalStateException e) {
-                // TODO WORKAROUND Remove when PLANNER-46 is fixed.
-                singleBenchmarkRunnerExceptionLogger.warn("The subSingleBenchmarkRunner ({}) failed.",
-                        subSingleBenchmarkRunner, e);
-                failureThrowable = e;
             }
             if (failureThrowable == null) {
                 subSingleBenchmarkRunner.getSubSingleBenchmarkResult().setSucceeded(true);
