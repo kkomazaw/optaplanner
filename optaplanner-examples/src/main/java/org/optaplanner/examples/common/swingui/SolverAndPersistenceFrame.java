@@ -642,15 +642,8 @@ public class SolverAndPersistenceFrame<Solution_> extends JFrame {
     }
 
     public void refreshScoreField(Score score) {
-<<<<<<< HEAD
-        // TODO Fix after https://issues.jboss.org/browse/PLANNER-405
-        int uninitializedVariableCount = solutionBusiness.getUninitializedVariableCount();
-        scoreField.setForeground(determineScoreFieldForeground(uninitializedVariableCount, score));
-        scoreField.setText("最新のベストスコア: " + ScoreUtils.getScoreWithUninitializedPrefix(uninitializedVariableCount, score));
-=======
         scoreField.setForeground(determineScoreFieldForeground(score));
-        scoreField.setText("Latest best score: " + score);
->>>>>>> upstream/master
+        scoreField.setText("最新のベストスコア: " + score);
     }
 
     private Color determineScoreFieldForeground(Score<?> score) {
